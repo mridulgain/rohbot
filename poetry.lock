@@ -504,6 +504,29 @@ python-versions = ">=3.6.8"
 diagrams = ["railroad-diagrams", "jinja2"]
 
 [[package]]
+name = "pytelegrambotapi"
+version = "4.12.0"
+description = "Python Telegram bot api."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+requests = "*"
+
+[package.extras]
+PIL = ["pillow"]
+aiohttp = ["aiohttp"]
+aioredis = ["aioredis"]
+coloredlogs = ["coloredlogs"]
+fastapi = ["fastapi"]
+json = ["ujson"]
+psutil = ["psutil"]
+redis = ["redis (>=3.4.1)"]
+uvicorn = ["uvicorn"]
+watchdog = ["watchdog"]
+
+[[package]]
 name = "python-lsp-jsonrpc"
 version = "1.0.0"
 description = "JSON RPC 2.0 server library"
@@ -516,6 +539,14 @@ ujson = ">=3.0.0"
 
 [package.extras]
 test = ["pylint", "pycodestyle", "pyflakes", "pytest", "pytest-cov", "coverage"]
+
+[[package]]
+name = "pytz"
+version = "2023.3"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "pywin32-ctypes"
@@ -625,6 +656,18 @@ description = "Python 2 and 3 compatibility utilities"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "telebot"
+version = "0.0.5"
+description = "A Telegram bot library, with simple route decorators."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+pyTelegramBotAPI = "*"
+requests = "*"
 
 [[package]]
 name = "toml"
@@ -746,7 +789,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-ena
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10.0,<3.11"
-content-hash = "2363728963beb48a57ef260459cbac5ec7783c4b5bb1c6125526eb03077d0349"
+content-hash = "74ba79a4f9f2baa3b6a447bf20f5fafc0ded295cf4ddb0828af83ce26275acb8"
 
 [metadata.files]
 blinker = []
@@ -793,7 +836,9 @@ pycparser = []
 pyflakes = []
 pylev = []
 pyparsing = []
+pytelegrambotapi = []
 python-lsp-jsonrpc = []
+pytz = []
 pywin32-ctypes = []
 replit-python-lsp-server = []
 requests = []
@@ -802,6 +847,7 @@ rope = []
 secretstorage = []
 shellingham = []
 six = []
+telebot = []
 toml = []
 tomli = []
 tomlkit = []
