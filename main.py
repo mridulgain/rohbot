@@ -66,9 +66,9 @@ def job(id):
 
 
 TZ_KOLKATA = pytz.timezone('Asia/Kolkata')
-leaving_date = datetime(2023, 7, 16, tzinfo=TZ_KOLKATA)
+LEAVING_DATE = datetime(2023, 7, 16, tzinfo=TZ_KOLKATA)
 today = datetime.now(TZ_KOLKATA)
-difference = today - leaving_date
+difference = today - LEAVING_DATE
 
 
 def good_morning(id):
@@ -87,10 +87,12 @@ def good_night(id):
 
 
 if __name__ == "__main__":
-  schedule.every(15).minutes.do(job, id=mridul_id)
-  # schedule.every().day.at("23:59", "Asia/Kolkata").do(good_night,
-  #                                                     id=mallika_id)
-  schedule.every().day.at("11:32:09", "Asia/Kolkata").do(good_morning,
+  schedule.every(99).minutes.do(job, id=mridul_id)
+  schedule.every().day.at("23:59:59", "Asia/Kolkata").do(good_night,
+                                                      id=mallika_id)
+  schedule.every().day.at("23:59:59", "Asia/Kolkata").do(good_night,
+                                                      id=mridul_id)
+  schedule.every().day.at("12:32:09", "Asia/Kolkata").do(good_morning,
                                                          id=us_grp_id)
   # schedule.every().day.at("01:30:00", TZ_KOLKATA).do(good_morning,
   #                                                    id=us_grp_id)
