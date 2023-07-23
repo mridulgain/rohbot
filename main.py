@@ -1,11 +1,14 @@
 import telebot
 import os
 from flask import Flask, request
-import schedule, time
+import schedule, time, pytz
 from threading import Thread
 import random
 from emojis import emojis
+from datetime import datetime
+import logging as log
 
+log.basicConfig(level=log.INFO)
 TOKEN = os.environ['API_KEY']
 bot = telebot.TeleBot(token=TOKEN)
 server = Flask(__name__)
@@ -22,7 +25,7 @@ def greet(message):
 
 @bot.message_handler(func=lambda message: True)
 def generic_reply(message):
-  print(message.chat.id, ":", message.text)
+  log.debug(message.chat.id, ":", message.text)
   bot.send_message(message.chat.id, random.choice(emojis))
 
 
@@ -57,22 +60,43 @@ def schedule_checker():
 
 
 def job(id):
+  log.info("scheduled job")
   bot.send_message(
-    id,
-    time.asctime(time.localtime()) + "\t" + random.choice(emojis))
+    id, f"{time.asctime(time.localtime())} {random.choice(emojis)}")
+
+
+TZ_KOLKATA = pytz.timezone('Asia/Kolkata')
+leaving_date = datetime(2023, 7, 16, tzinfo=TZ_KOLKATA)
+today = datetime.now(TZ_KOLKATA)
+difference = today - leaving_date
 
 
 def good_morning(id):
-  bot.send_message(
-    id, "Good morning sunshine 🌞. It's been %d days away from Rohan 😢")
+  msg = ("Good Morning sunshine 🌞.\n"
+         f"It's been {difference.days} long days since you left Kolkata 😢")
+  log.info(msg)
+  bot.send_message(id, msg)
+
+
+def good_night(id):
+  msg = ("Good Night 🌙 dear.\nSleep well and take care!\n"
+         f"It's been {difference.days} long days since you left Kolkata 😢\n"
+         "We hope to see you soon 🙏")
+  log.info(msg)
+  bot.send_message(id, msg)
 
 
 if __name__ == "__main__":
-  schedule.every(7).minutes.do(job, id=mridul_id)
-  schedule.every().day.at("06:37", "Asia/Kolkata").do(good_morning,
-                                                      id=mallika_id)
-  schedule.every().day.at("06:00", "Asia/Kolkata").do(good_morning,
-                                                      id=us_grp_id)
+  schedule.every(15).minutes.do(job, id=mridul_id)
+  # schedule.every().day.at("23:59", "Asia/Kolkata").do(good_night,
+  #                                                     id=mallika_id)
+  schedule.every().day.at("11:32:09", "Asia/Kolkata").do(good_morning,
+                                                         id=us_grp_id)
+  # schedule.every().day.at("01:30:00", TZ_KOLKATA).do(good_morning,
+  #                                                    id=us_grp_id)
+  # schedule.every().day.at("01:20", "Asia/Kolkata").do(good_night,
+  #                                                     id=us_grp_id)
   Thread(target=schedule_checker).start()
 
+  # run simple flask web server
   server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
