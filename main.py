@@ -59,7 +59,7 @@ def schedule_checker():
     time.sleep(30)
 
 
-def job(id):
+def restart_aleart(id):
   log.info("scheduled job")
   bot.send_message(
     id, f"{time.asctime(time.localtime())} {random.choice(emojis)}")
@@ -79,21 +79,18 @@ def good_morning(id):
 
 
 def good_night(id):
-  msg = ("Good Night 🌙 dear.\nSleep well and take care!\n"
+  msg = ("Good Night 🌙 dear.\nSleep well and take care!🛌🏼\n"
          f"It's been {difference.days} long days since you left Kolkata 😢\n"
-         "We hope to see you soon 🙏")
+         "We miss you a lot & hope to see you soon 🙏")
   log.info(msg)
   bot.send_message(id, msg)
 
 
 if __name__ == "__main__":
-  schedule.every(99).minutes.do(job, id=mridul_id)
-  schedule.every().day.at("23:59:59", "Asia/Kolkata").do(good_night,
-                                                      id=mallika_id)
-  schedule.every().day.at("23:59:59", "Asia/Kolkata").do(good_night,
-                                                      id=mridul_id)
-  schedule.every().day.at("12:32:09", "Asia/Kolkata").do(good_morning,
-                                                         id=us_grp_id)
+  restart_aleart(mridul_id)
+  schedule.every().day.at("18:49:59").do(good_night, id=mallika_id)
+  schedule.every().day.at("18:49:59").do(good_night, id=mridul_id)
+  # schedule.every().day.at("01:50").do(good_morning, id=us_grp_id)
   # schedule.every().day.at("01:30:00", TZ_KOLKATA).do(good_morning,
   #                                                    id=us_grp_id)
   # schedule.every().day.at("01:20", "Asia/Kolkata").do(good_night,
