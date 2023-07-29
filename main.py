@@ -6,15 +6,21 @@ from threading import Thread
 import random
 from emojis import emojis
 from datetime import datetime
-import logging as log
+import logging
+import openai, os
 
-log.basicConfig(level=log.DEBUG)
-TOKEN = os.environ['API_KEY']
-bot = telebot.TeleBot(token=TOKEN)
+
+# logging
+log = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
+# bot instance
+TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
+openai.api_key = os.environ['OPENAI_TOKEN']
+bot = telebot.TeleBot(token=TELEGRAM_TOKEN)
+# simple web server
 server = Flask(__name__)
+# miscellaneous
 mridul_id = 5703068653
-
-# bot
 
 
 def send_log(message):
@@ -46,7 +52,26 @@ def greet(message):
 def help(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
-  bot.send_message(message.chat.id, "---- Help section ----")
+  bot.send_message(message.chat.id, "please contact my maintainer: @mridulgain")
+
+
+def get_completion(prompt, model="gpt-3.5-turbo"):
+  messages = [{"role": "user", "content": prompt}]
+  response = openai.ChatCompletion.create(
+    model=model,
+    messages=messages,
+    temperature=0,
+  )
+  return response.choices[0].message["content"]
+
+
+@bot.message_handler(commands=['rohbot', 'Rohbot'])
+def ai_reply(message):
+  log.debug(f"{message.chat.id} : {message.text}")
+  send_log(message)
+  bot_response = get_completion(message.text)
+  log.debug(bot_response)
+  bot.send_message(message.chat.id, bot_response)
 
 
 @bot.message_handler(func=lambda message: True)
@@ -60,7 +85,7 @@ def generic_reply(message):
 
 
 # webhook
-@server.route('/' + TOKEN, methods=['POST'])
+@server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
 def getMessage():
   bot.process_new_updates(
     [telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
@@ -70,7 +95,7 @@ def getMessage():
 @server.route("/")
 def webhook():
   bot.remove_webhook()
-  bot.set_webhook(url='https://rohbot.mridulgain1.repl.co/' + TOKEN)
+  bot.set_webhook(url='https://rohbot.mridulgain1.repl.co/' + TELEGRAM_TOKEN)
   return "Rohbot's webhook..", 200
 
 
@@ -112,7 +137,7 @@ def good_morning(id):
 
 def good_night(id):
   msg = ("Good Night 🌙 dear.\nSleep well and take care! 🛌🏼\n"
-         f"It's been {difference.days} long days since you left Kolkata 😢\n"
+         f"It's been {difference.days} long days since you left Kolkata. 😢"
          "We miss you a lot & hope to see you soon 🙏")
   log.info(msg)
   bot.send_message(id, msg)
@@ -120,9 +145,9 @@ def good_night(id):
 
 if __name__ == "__main__":
   restart_aleart(mridul_id)
-  schedule.every().day.at("18:49:59").do(good_night, id=mallika_id)
-  schedule.every().day.at("18:49:59").do(good_night, id=mridul_id)
-  schedule.every().day.at("17:50").do(good_morning, id=us_grp_id)
+  schedule.every().day.at("17:49:59").do(good_night, id=mallika_id)
+  schedule.every().day.at("17:49:59").do(good_night, id=mridul_id)
+  schedule.every().day.at("03:50").do(good_morning, id=us_grp_id)
   # schedule.every().day.at("01:30:00", TZ_KOLKATA).do(good_morning,
   #                                                    id=us_grp_id)
   # schedule.every().day.at("01:20", "Asia/Kolkata").do(good_night,
