@@ -45,16 +45,25 @@ def send_log(message):
 def greet(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
-  bot.send_message(message.chat.id, "Hey! I'm Roh-Bot. Hows it going?")
+  bot.send_message(message.chat.id, "Hey! I'm Roh-Bot. How's it going?")
 
 
 @bot.message_handler(commands=['help', 'Help'])
 def help(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
+  msg = ("Usage:\n"
+    "`/rohbot <prompt>`: use chatgpt integration to ask a question")
+  bot.send_message(message.chat.id, msg)
+
+
+@bot.message_handler(commands=['support'])
+def help(message):
+  log.debug(f"{message.chat.id} : {message.text}")
+  send_log(message)
   bot.send_message(message.chat.id, "please contact my maintainer: @mridulgain")
 
-
+  
 def get_completion(prompt, model="gpt-3.5-turbo"):
   messages = [{"role": "user", "content": prompt}]
   response = openai.ChatCompletion.create(
@@ -96,7 +105,7 @@ def getMessage():
 def webhook():
   bot.remove_webhook()
   bot.set_webhook(url='https://rohbot.mridulgain1.repl.co/' + TELEGRAM_TOKEN)
-  return "Rohbot's webhook..", 200
+  return "🤖 Rohbot's webhook..", 200
 
 
 # scheduled message
