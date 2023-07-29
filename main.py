@@ -52,16 +52,16 @@ def greet(message):
 def help(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
-  msg = ("Usage:\n"
-    "`/rohbot <prompt>`: use chatgpt integration to ask a question")
-  bot.send_message(message.chat.id, msg)
+  msg = ("Send a prompt to chat GPT:\n"
+    "`/rohbot <prompt>`")
+  bot.send_message(message.chat.id, msg, parse_mode="Markdown")
 
 
 @bot.message_handler(commands=['support'])
 def help(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
-  bot.send_message(message.chat.id, "please contact my maintainer: @mridulgain")
+  bot.send_message(message.chat.id, "maintainer: @mridulgain")
 
   
 def get_completion(prompt, model="gpt-3.5-turbo"):
