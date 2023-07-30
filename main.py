@@ -7,12 +7,18 @@ import random
 from emojis import emojis
 from datetime import datetime
 import logging
-import openai, os
-
+import openai
+from personal import(
+  MRIDUL_ID,
+  MALLIKA_ID,
+  US_GRP_ID,
+  GD_MORNING,
+  GD_NIGHT
+)
 
 # logging
 log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 # bot instance
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 openai.api_key = os.environ['OPENAI_TOKEN']
@@ -20,7 +26,7 @@ bot = telebot.TeleBot(token=TELEGRAM_TOKEN)
 # simple web server
 server = Flask(__name__)
 # miscellaneous
-mridul_id = 5703068653
+
 
 
 def send_log(message):
@@ -37,15 +43,15 @@ def send_log(message):
   d["user_name"] = message.from_user.username
   d["msg"] = message.text
   log.debug(d)
-  if mridul_id != message.chat.id:
-    bot.send_message(mridul_id, str(d))
+  if MRIDUL_ID != message.chat.id:
+    bot.send_message(MRIDUL_ID, str(d))
 
 
 @bot.message_handler(commands=['Hi', 'Hello', 'start'])
 def greet(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
-  bot.send_message(message.chat.id, "Hey! I'm Roh-Bot. How's it going?")
+  bot.send_message(message.chat.id, "Hey! I'm Rohan's Personal Bot 🤖 How's it going?")
 
 
 @bot.message_handler(commands=['help', 'Help'])
@@ -53,17 +59,17 @@ def help(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
   msg = ("Send a prompt to chat GPT:\n"
-    "`/rohbot <prompt>`")
+         "`/rohbot <prompt>`")
   bot.send_message(message.chat.id, msg, parse_mode="Markdown")
 
 
 @bot.message_handler(commands=['support'])
-def help(message):
+def support(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
   bot.send_message(message.chat.id, "maintainer: @mridulgain")
 
-  
+
 def get_completion(prompt, model="gpt-3.5-turbo"):
   messages = [{"role": "user", "content": prompt}]
   response = openai.ChatCompletion.create(
@@ -74,20 +80,29 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
   return response.choices[0].message["content"]
 
 
-@bot.message_handler(commands=['rohbot', 'Rohbot'])
 def ai_reply(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
+  bot.send_chat_action(message.chat.id, "typing")
   bot_response = get_completion(message.text)
   log.debug(bot_response)
   bot.send_message(message.chat.id, bot_response)
 
 
-@bot.message_handler(func=lambda message: True)
-def generic_reply(message):
+@bot.message_handler(commands=['rohbot', 'Rohbot'])
+def reply(message):
+  ai_reply(message)
+
+
+@bot.message_handler(commands=['emoji'])
+def emoji(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
   bot.send_message(message.chat.id, random.choice(emojis))
+  
+@bot.message_handler(func=lambda message: True)
+def reply(message):
+  ai_reply(message)
 
 
 # bot.polling()
@@ -109,8 +124,6 @@ def webhook():
 
 
 # scheduled message
-mallika_id = 5540889629
-us_grp_id = -982538437
 
 
 def schedule_checker():
@@ -127,40 +140,29 @@ def schedule_checker():
 
 def restart_aleart(id):
   log.info("scheduled job")
-  bot.send_message(
-    id, f"{time.asctime(time.localtime())} {random.choice(emojis)}")
-
-
-TZ_KOLKATA = pytz.timezone('Asia/Kolkata')
-LEAVING_DATE = datetime(2023, 7, 16, tzinfo=TZ_KOLKATA)
-today = datetime.now(TZ_KOLKATA)
-difference = today - LEAVING_DATE
+  time_stamp = f"{time.asctime(time.localtime())} {random.choice(emojis)}"
+  bot.send_message(id, time_stamp)
 
 
 def good_morning(id):
-  msg = ("Good Morning sunshine 🌞.\n"
-         f"It's been {difference.days} long days since you left Kolkata 😢")
-  log.info(msg)
-  bot.send_message(id, msg)
+  log.info(GD_MORNING)
+  bot.send_message(id, GD_MORNING)
 
 
 def good_night(id):
-  msg = ("Good Night 🌙 dear.\nSleep well and take care! 🛌🏼\n"
-         f"It's been {difference.days} long days since you left Kolkata. 😢"
-         "We miss you a lot & hope to see you soon 🙏")
-  log.info(msg)
-  bot.send_message(id, msg)
+  log.info(GD_NIGHT)
+  bot.send_message(id, GD_NIGHT)
 
 
 if __name__ == "__main__":
-  restart_aleart(mridul_id)
-  schedule.every().day.at("17:49:59").do(good_night, id=mallika_id)
-  schedule.every().day.at("17:49:59").do(good_night, id=mridul_id)
-  schedule.every().day.at("03:50").do(good_morning, id=us_grp_id)
+  restart_aleart(MRIDUL_ID)
+  schedule.every().day.at("17:49:59").do(good_night, id=MALLIKA_ID)
+  schedule.every().day.at("17:49:59").do(good_night, id=MRIDUL_ID)
+  schedule.every().day.at("06:20").do(good_morning, id=US_GRP_ID)
   # schedule.every().day.at("01:30:00", TZ_KOLKATA).do(good_morning,
-  #                                                    id=us_grp_id)
+  #                                                    id=US_GRP_ID)
   # schedule.every().day.at("01:20", "Asia/Kolkata").do(good_night,
-  #                                                     id=us_grp_id)
+  #                                                     id=US_GRP_ID)
   Thread(target=schedule_checker).start()
 
   # run simple flask web server
