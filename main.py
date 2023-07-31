@@ -86,7 +86,7 @@ def ai_reply(message):
   bot.send_chat_action(message.chat.id, "typing")
   bot_response = get_completion(message.text)
   log.debug(bot_response)
-  bot.send_message(message.chat.id, bot_response)
+  bot.send_message(message.chat.id, bot_response, parse_mode="Markdown")
 
 
 @bot.message_handler(commands=['rohbot', 'Rohbot'])
