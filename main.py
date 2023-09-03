@@ -1,17 +1,16 @@
-import telebot
 import os
-from flask import Flask, request
-import schedule, time, pytz
-from threading import Thread
 import random
-from emojis import emojis
-from datetime import datetime
+import telebot
+import schedule, time
 import logging
 import openai
+
+from threading import Thread
+from flask import Flask, request
+from emojis import emojis
 from personal import(
   MRIDUL_ID,
   MALLIKA_ID,
-  US_GRP_ID,
   GD_MORNING,
   GD_NIGHT
 )
@@ -158,7 +157,8 @@ if __name__ == "__main__":
   restart_aleart(MRIDUL_ID)
   schedule.every().day.at("17:49:59").do(good_night, id=MALLIKA_ID)
   schedule.every().day.at("17:49:59").do(good_night, id=MRIDUL_ID)
-  schedule.every().day.at("06:20").do(good_morning, id=US_GRP_ID)
+  schedule.every().day.at("01:40").do(good_morning, id=MRIDUL_ID)
+  schedule.every().day.at("01:40").do(good_morning, id=MALLIKA_ID)
   # schedule.every().day.at("01:30:00", TZ_KOLKATA).do(good_morning,
   #                                                    id=US_GRP_ID)
   # schedule.every().day.at("01:20", "Asia/Kolkata").do(good_night,
