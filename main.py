@@ -8,12 +8,7 @@ import openai
 from threading import Thread
 from flask import Flask, request
 from emojis import emojis
-from personal import(
-  MRIDUL_ID,
-  MALLIKA_ID,
-  GD_MORNING,
-  GD_NIGHT
-)
+from personal import (MRIDUL_ID, MALLIKA_ID, gd_morning, gd_night)
 
 # logging
 log = logging.getLogger(__name__)
@@ -25,7 +20,6 @@ bot = telebot.TeleBot(token=TELEGRAM_TOKEN)
 # simple web server
 server = Flask(__name__)
 # miscellaneous
-
 
 
 def send_log(message):
@@ -50,7 +44,8 @@ def send_log(message):
 def greet(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
-  bot.send_message(message.chat.id, "Hey! I'm Rohan's Personal Bot 🤖 How's it going?")
+  bot.send_message(message.chat.id,
+                   "Hey! I'm Rohan's Personal Bot 🤖 How's it going?")
 
 
 @bot.message_handler(commands=['help', 'Help'])
@@ -89,19 +84,16 @@ def ai_reply(message):
 
 
 @bot.message_handler(commands=['rohbot', 'Rohbot'])
+@bot.message_handler(func=lambda message: True)
 def reply(message):
   ai_reply(message)
 
 
-@bot.message_handler(commands=['emoji'])
+@bot.message_handler(commands=['emoji', 'Emoji'])
 def emoji(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
   bot.send_message(message.chat.id, random.choice(emojis))
-  
-@bot.message_handler(func=lambda message: True)
-def reply(message):
-  ai_reply(message)
 
 
 # bot.polling()
@@ -143,26 +135,29 @@ def restart_aleart(id):
   bot.send_message(id, time_stamp)
 
 
-def good_morning(id):
-  log.info(GD_MORNING)
-  bot.send_message(id, GD_MORNING)
-
-
-def good_night(id):
-  log.info(GD_NIGHT)
-  bot.send_message(id, GD_NIGHT)
+def send_message(id, msg):
+  log.info(msg)
+  bot.send_message(id, msg)
 
 
 if __name__ == "__main__":
   restart_aleart(MRIDUL_ID)
-  schedule.every().day.at("17:49:59").do(good_night, id=MALLIKA_ID)
-  schedule.every().day.at("17:49:59").do(good_night, id=MRIDUL_ID)
-  schedule.every().day.at("01:40").do(good_morning, id=MRIDUL_ID)
-  schedule.every().day.at("01:40").do(good_morning, id=MALLIKA_ID)
-  # schedule.every().day.at("01:30:00", TZ_KOLKATA).do(good_morning,
-  #                                                    id=US_GRP_ID)
-  # schedule.every().day.at("01:20", "Asia/Kolkata").do(good_night,
-  #                                                     id=US_GRP_ID)
+  # night
+  schedule.every().day.at("17:49:30").do(send_message,
+                                         id=MALLIKA_ID,
+                                         msg=gd_night())
+  schedule.every().day.at("17:49:30").do(send_message,
+                                         id=MRIDUL_ID,
+                                         msg=gd_night())
+  # morning
+  # schedule.every().day.at("01:40").do(send_message,
+  #                                     id=MRIDUL_ID,
+  #                                     msg=gd_morning())
+  # schedule.every().day.at("01:40").do(send_message,
+  #                                     id=MALLIKA_ID,
+  #                                     msg=gd_morning())
+  # test
+  # schedule.every(10).seconds.do(send_message, id=MRIDUL_ID, msg=gd_night())
   Thread(target=schedule_checker).start()
 
   # run simple flask web server
