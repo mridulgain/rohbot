@@ -82,18 +82,25 @@ def ai_reply(message):
   log.debug(bot_response)
   bot.send_message(message.chat.id, bot_response, parse_mode="Markdown")
 
-
-@bot.message_handler(commands=['rohbot', 'Rohbot'])
-@bot.message_handler(func=lambda message: True)
-def reply(message):
-  ai_reply(message)
-
-
 @bot.message_handler(commands=['emoji', 'Emoji'])
 def emoji(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
   bot.send_message(message.chat.id, random.choice(emojis))
+
+
+@bot.message_handler(commands=['askgf'])
+def askgf(message):
+  log.debug(f"{message.chat.id} : {message.text}")
+  send_log(message)
+  text = f"{message.chat.id} asked me to tell you, {message.text}"
+  bot.send_message(MALLIKA_ID, text)
+
+
+@bot.message_handler(commands=['rohbot', 'Rohbot'])
+@bot.message_handler(func=lambda message: True)
+def reply(message):
+  ai_reply(message)
 
 
 # bot.polling()
@@ -150,14 +157,14 @@ if __name__ == "__main__":
                                          id=MRIDUL_ID,
                                          msg=gd_night())
   # morning
-  # schedule.every().day.at("01:40").do(send_message,
-  #                                     id=MRIDUL_ID,
-  #                                     msg=gd_morning())
-  # schedule.every().day.at("01:40").do(send_message,
-  #                                     id=MALLIKA_ID,
-  #                                     msg=gd_morning())
+  schedule.every().day.at("01:40").do(send_message,
+                                      id=MRIDUL_ID,
+                                      msg=gd_morning())
+  schedule.every().day.at("01:40").do(send_message,
+                                      id=MALLIKA_ID,
+                                      msg=gd_morning())
   # test
-  # schedule.every(10).seconds.do(send_message, id=MRIDUL_ID, msg=gd_night())
+  # schedule.every(10).seconds.do(send_message, id=MRIDUL_ID, msg=gd_morning())
   Thread(target=schedule_checker).start()
 
   # run simple flask web server
