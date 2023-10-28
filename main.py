@@ -82,6 +82,7 @@ def ai_reply(message):
   log.debug(bot_response)
   bot.send_message(message.chat.id, bot_response, parse_mode="Markdown")
 
+
 @bot.message_handler(commands=['emoji', 'Emoji'])
 def emoji(message):
   log.debug(f"{message.chat.id} : {message.text}")
@@ -89,7 +90,7 @@ def emoji(message):
   bot.send_message(message.chat.id, random.choice(emojis))
 
 
-@bot.message_handler(commands=['askgf'])
+@bot.message_handler(commands=['askgf', 'tellgf'])
 def askgf(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
@@ -137,34 +138,35 @@ def schedule_checker():
 
 
 def restart_aleart(id):
-  log.info("scheduled job")
+  log.info("restart aleart")
   time_stamp = f"{time.asctime(time.localtime())} {random.choice(emojis)}"
   bot.send_message(id, time_stamp)
 
 
-def send_message(id, msg):
-  log.info(msg)
+def send_messageF(id, msg_func):
+  msg = msg_func()
+  # log.info(msg)
   bot.send_message(id, msg)
 
 
 if __name__ == "__main__":
   restart_aleart(MRIDUL_ID)
   # night
-  schedule.every().day.at("17:49:30").do(send_message,
+  schedule.every().day.at("17:49:30").do(send_messageF,
                                          id=MALLIKA_ID,
-                                         msg=gd_night())
-  schedule.every().day.at("17:49:30").do(send_message,
+                                         msg_func=gd_night)
+  schedule.every().day.at("17:49:30").do(send_messageF,
                                          id=MRIDUL_ID,
-                                         msg=gd_night())
+                                         msg_func=gd_night)
   # morning
-  schedule.every().day.at("01:40").do(send_message,
+  schedule.every().day.at("01:40").do(send_messageF,
                                       id=MRIDUL_ID,
-                                      msg=gd_morning())
-  schedule.every().day.at("01:40").do(send_message,
+                                      msg_func=gd_morning)
+  schedule.every().day.at("01:40").do(send_messageF,
                                       id=MALLIKA_ID,
-                                      msg=gd_morning())
+                                      msg_func=gd_morning)
   # test
-  # schedule.every(10).seconds.do(send_message, id=MRIDUL_ID, msg=gd_morning())
+  # schedule.every(10).seconds.do(send_messageF, id=MRIDUL_ID, msg_func=gd_morning)
   Thread(target=schedule_checker).start()
 
   # run simple flask web server
