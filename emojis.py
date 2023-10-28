@@ -6,5 +6,15 @@ emojis = [
     "👻", "👽", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "🙈", "🙉", "🙊",
     "🐵", "🦁", "🐯", "🐴", "🐎", "🦄", "🦓", "🦌", "🦙", "🦥", "🦘", "🦒", "🐂", "🐄", "🐃", "🐏",
     "🐑", "🐐", "🐪", "🐫", "🦏", "🦛", "🐭", "🐁", "🐀", "🐹", "🐰", "🐇", "🦔", "🦇", "🐻", "🐨",
-    "🐼", "🦡", "🦢", "🦉", "🦚", "🦜", "🐦", "🦩",
+    "🐼", "🦡", "🦢", "🦉", "🦚", "🦜", "🐦", "🦩", '🍔', '🍟', '🍕', '🍱', '🍣', '🍦', '🍩', '🍪', 
+    '🍰', '🍫', '🍬', '🍭', '🥤',
 ]
+
+import telebot
+import os
+from personal import MRIDUL_ID
+
+if __name__ == "__main__":
+  TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
+  bot = telebot.TeleBot(token=TELEGRAM_TOKEN)
+  bot.send_message(MRIDUL_ID, str(emojis))

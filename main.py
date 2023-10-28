@@ -49,7 +49,7 @@ def greet(message):
 
 
 @bot.message_handler(commands=['help', 'Help'])
-def help(message):
+def help_cmd(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
   msg = ("Send a prompt to chat GPT:\n"
