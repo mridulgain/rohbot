@@ -12,13 +12,14 @@ from personal import (MRIDUL_ID, MALLIKA_ID, gd_morning, gd_night)
 
 # logging
 log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 # bot instance
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 openai.api_key = os.environ['OPENAI_TOKEN']
 bot = telebot.TeleBot(token=TELEGRAM_TOKEN)
 # simple web server
 server = Flask(__name__)
+URL = os.environ['SERVER_ENDPOINT']
 # miscellaneous
 
 
@@ -118,7 +119,7 @@ def getMessage():
 @server.route("/")
 def webhook():
   bot.remove_webhook()
-  bot.set_webhook(url='https://rohbot.mridulgain1.repl.co/' + TELEGRAM_TOKEN)
+  bot.set_webhook(url=URL + TELEGRAM_TOKEN)
   return "🤖 Rohbot's webhook..", 200
 
 
@@ -162,12 +163,12 @@ if __name__ == "__main__":
   schedule.every().day.at("01:40").do(send_messageF,
                                       id=MRIDUL_ID,
                                       msg_func=gd_morning)
-  schedule.every().day.at("01:40").do(send_messageF,
-                                      id=MALLIKA_ID,
-                                      msg_func=gd_morning)
+  # schedule.every().day.at("01:40").do(send_messageF,
+  #                                     id=MALLIKA_ID,
+  #                                     msg_func=gd_morning)
   # test
   # schedule.every(10).seconds.do(send_messageF, id=MRIDUL_ID, msg_func=gd_morning)
   Thread(target=schedule_checker).start()
 
   # run simple flask web server
-  server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+  server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5001)))
