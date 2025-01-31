@@ -62,15 +62,16 @@ def help_cmd(message):
 def support(message):
   log.debug(f"{message.chat.id} : {message.text}")
   send_log(message)
-  bot.send_message(message.chat.id, "maintainer: @mridulgain")
+  bot.send_message(message.chat.id,
+                   "maintainer: @mridulgain\nemail: mridulgain@gmail.com")
 
 
 def get_completion(prompt, model="gpt-3.5-turbo"):
   messages = [{"role": "user", "content": prompt}]
   response = openai.ChatCompletion.create(
-    model=model,
-    messages=messages,
-    temperature=0,
+      model=model,
+      messages=messages,
+      temperature=0,
   )
   return response.choices[0].message["content"]
 
@@ -112,7 +113,7 @@ def reply(message):
 @server.route('/' + TELEGRAM_TOKEN, methods=['POST'])
 def getMessage():
   bot.process_new_updates(
-    [telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+      [telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
   return "!", 200
 
 
